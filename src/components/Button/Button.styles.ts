@@ -1,24 +1,21 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { ButtonVariant } from "./Button.schema";
 
 interface ButtonContainerProps {
   variant: ButtonVariant;
 }
 
-const buttonVariants = {
-  primary: "purple",
-  secondary: "orange",
-  danger: "red",
-  success: "green",
-};
-
 export const ButtonContainer = styled.button<ButtonContainerProps>`
   width: 100px;
   height: 40px;
   cursor: pointer;
+  color: ${(props) => props.theme.white};
+  border: none;
+  border-radius: 5px;
 
-  ${({ variant }) =>
-    css`
-      background-color: ${buttonVariants[variant]};
-    `}
+  background-color: ${(props) => props.theme["green-500"]};
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 `;
