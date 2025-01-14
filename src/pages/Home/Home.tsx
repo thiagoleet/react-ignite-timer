@@ -10,10 +10,13 @@ import {
   StartCountdownButton,
   TaskInput,
 } from "./styles";
-import { NewCycleFormData, newCycleFormValidationSchema } from "./schema";
+import {
+  NewCycleFormData,
+  newCycleFormValidationSchema,
+} from "./NewCycleFormData.schema";
 
 export default function HomePage() {
-  const { register, handleSubmit, watch } = useForm<NewCycleFormData>({
+  const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
       task: "",
@@ -23,6 +26,7 @@ export default function HomePage() {
 
   function handleCreateNewCycle(data: NewCycleFormData) {
     console.log(data);
+    reset();
   }
 
   const task = watch("task");
