@@ -7,7 +7,12 @@ export interface Cycle {
   finishedAt?: Date;
 }
 
-export function createNewCycle(task: string, minutesAmount: number): Cycle {
+export interface CreateCycleData {
+  task: string;
+  minutesAmount: number;
+}
+
+export function createCycle({ task, minutesAmount }: CreateCycleData): Cycle {
   return {
     id: crypto.randomUUID(),
     task,
