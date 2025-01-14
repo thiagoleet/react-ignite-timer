@@ -2,6 +2,7 @@ export interface Cycle {
   id: string;
   task: string;
   minutesAmount: number;
+  startDate: Date;
 }
 
 export function createNewCycle(task: string, minutesAmount: number): Cycle {
@@ -9,5 +10,6 @@ export function createNewCycle(task: string, minutesAmount: number): Cycle {
     id: crypto.randomUUID(),
     task,
     minutesAmount,
+    startDate: new Date(),
   };
 }

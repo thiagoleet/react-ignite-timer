@@ -2,6 +2,8 @@ import React from "react";
 import { Play } from "@phosphor-icons/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { differenceInSeconds } from "date-fns";
+
 import {
   CountdownContainer,
   FormContainer,
@@ -11,6 +13,7 @@ import {
   StartCountdownButton,
   TaskInput,
 } from "./styles";
+
 import {
   NewCycleFormData,
   newCycleFormValidationSchema,
@@ -30,15 +33,6 @@ export default function HomePage() {
     },
   });
 
-  function handleCreateNewCycle(data: NewCycleFormData) {
-    const newCycle = createNewCycle(data.task, data.minutesAmount);
-
-    setActiveCycleId(newCycle.id);
-    setCycles((cycles) => [...cycles, newCycle]);
-
-    reset();
-  }
-
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
@@ -52,6 +46,25 @@ export default function HomePage() {
 
   const task = watch("task");
   const isSubmitDisabled = !task;
+
+  function handleCreateNewCycle(data: NewCycleFormData) {
+    const newCycle = createNewCycle(data.task, data.minutesAmount);
+
+    setActiveCycleId(newCycle.id);
+    setCycles((cycles) => [...cycles, newCycle]);
+
+    reset();
+  }
+
+  React.useEffect(() => {
+    if (activeCycle) {
+      setInterval(() => {
+        setAmmountSecondsPast(
+          differenceInSeconds(new Date(), activeCycle.startDate)
+        );
+      }, 1000);
+    }
+  }, [activeCycle]);
 
   return (
     <HomeContainer>
