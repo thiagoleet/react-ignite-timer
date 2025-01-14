@@ -16,6 +16,8 @@ import {
 } from "./styles";
 
 import {
+  MAXIMUM_MINUTES_AMOUNT,
+  MINIMUM_MINUTES_AMOUNT,
   NewCycleFormData,
   newCycleFormValidationSchema,
 } from "./NewCycleFormData.schema";
@@ -61,8 +63,8 @@ export default function HomePage() {
   function handleInteruptCycle() {
     setActiveCycleId(null);
 
-    setCycles(
-      cycles.map((cycle) => {
+    setCycles((state) =>
+      state.map((cycle) => {
         if (cycle.id === activeCycleId) {
           return {
             ...cycle,
@@ -80,16 +82,37 @@ export default function HomePage() {
 
     if (activeCycle) {
       interval = setInterval(() => {
-        setAmmountSecondsPast(
-          differenceInSeconds(new Date(), activeCycle.startDate)
+        const secondsDifference = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate
         );
+
+        if (secondsDifference >= totalSeconds) {
+          setCycles((state) =>
+            state.map((cycle) => {
+              if (cycle.id === activeCycleId) {
+                return {
+                  ...cycle,
+                  finishedAt: new Date(),
+                };
+              }
+
+              return cycle;
+            })
+          );
+
+          setAmmountSecondsPast(totalSeconds);
+          clearInterval(interval);
+        } else {
+          setAmmountSecondsPast(secondsDifference);
+        }
       }, 1000);
     }
 
     return () => {
       clearInterval(interval);
     };
-  }, [activeCycle]);
+  }, [activeCycle, totalSeconds, activeCycleId]);
 
   React.useEffect(() => {
     if (activeCycle) {
@@ -122,9 +145,9 @@ export default function HomePage() {
             type="number"
             id="minutesAmount"
             placeholder="00"
-            step={5}
-            min={5}
-            max={60}
+            step={MINIMUM_MINUTES_AMOUNT}
+            min={MINIMUM_MINUTES_AMOUNT}
+            max={MAXIMUM_MINUTES_AMOUNT}
             disabled={!!activeCycle}
             {...register("minutesAmount", { valueAsNumber: true })}
           />
