@@ -3,6 +3,7 @@ export interface Cycle {
   task: string;
   minutesAmount: number;
   startDate: Date;
+  interuptedAt?: Date;
 }
 
 export function createNewCycle(task: string, minutesAmount: number): Cycle {
