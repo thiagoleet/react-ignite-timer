@@ -20,6 +20,8 @@ import { createNewCycle, Cycle } from "../../models/Cycle";
 export default function HomePage() {
   const [cycles, setCycles] = React.useState<Cycle[]>([]);
   const [activeCycleId, setActiveCycleId] = React.useState<string | null>(null);
+  const [ammountSecondsPast, setAmmountSecondsPast] = React.useState(0);
+
   const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
@@ -37,9 +39,19 @@ export default function HomePage() {
     reset();
   }
 
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
+  const currentSeconds = activeCycle ? totalSeconds - ammountSecondsPast : 0;
+
+  const minutesAmount = Math.floor(currentSeconds / 60);
+  const secondsAmount = currentSeconds % 60;
+
+  const minutes = String(minutesAmount).padStart(2, "0");
+  const seconds = String(secondsAmount).padStart(2, "0");
+
   const task = watch("task");
   const isSubmitDisabled = !task;
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
   return (
     <HomeContainer>
@@ -74,11 +86,11 @@ export default function HomePage() {
         </FormContainer>
 
         <CountdownContainer>
-          <span>0</span>
-          <span>0</span>
+          <span>{minutes[0]}</span>
+          <span>{minutes[1]}</span>
           <Separator>:</Separator>
-          <span>0</span>
-          <span>0</span>
+          <span>{seconds[0]}</span>
+          <span>{seconds[1]}</span>
         </CountdownContainer>
         <StartCountdownButton
           type="submit"
