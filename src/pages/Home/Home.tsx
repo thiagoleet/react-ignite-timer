@@ -52,19 +52,32 @@ export default function HomePage() {
 
     setActiveCycleId(newCycle.id);
     setCycles((cycles) => [...cycles, newCycle]);
+    setAmmountSecondsPast(0);
 
     reset();
   }
 
   React.useEffect(() => {
+    let interval: number;
+
     if (activeCycle) {
-      setInterval(() => {
+      interval = setInterval(() => {
         setAmmountSecondsPast(
           differenceInSeconds(new Date(), activeCycle.startDate)
         );
       }, 1000);
     }
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [activeCycle]);
+
+  React.useEffect(() => {
+    if (activeCycle) {
+      document.title = `${minutes}:${seconds} - ${activeCycle.task}`;
+    }
+  }, [activeCycle, minutes, seconds]);
 
   return (
     <HomeContainer>
