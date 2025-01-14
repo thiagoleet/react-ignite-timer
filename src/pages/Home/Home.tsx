@@ -14,7 +14,7 @@ import {
   newCycleFormValidationSchema,
 } from "./NewCycleFormData.schema";
 import { createNewCycle, Cycle } from "../../models/Cycle";
-import { CyclesContext } from "./context/CyclesContext";
+import { CyclesContext } from "../../contexts/CyclesContext";
 import { Countdown } from "./components/Countdown";
 import { NewCycleForm } from "./components/NewCycleForm";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Cycle } from "../../../models/Cycle";
+import { Cycle } from "../models/Cycle";
 
 export interface CyclesContextData {
   activeCycle: Cycle | undefined;

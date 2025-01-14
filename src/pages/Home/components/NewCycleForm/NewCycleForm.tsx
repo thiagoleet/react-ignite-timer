@@ -4,7 +4,7 @@ import {
   MINIMUM_MINUTES_AMOUNT,
 } from "../../NewCycleFormData.schema";
 import { FormContainer, MinutesAmountInput, TaskInput } from "./styles";
-import { CyclesContext } from "../../context/CyclesContext";
+import { CyclesContext } from "../../../../contexts/CyclesContext";
 import { useFormContext } from "react-hook-form";
 
 export default function NewCycleForm() {
