@@ -6,20 +6,51 @@ interface CyclesContextProviderProps {
   children: ReactNode;
 }
 
+interface CyclesState {
+  cycles: Cycle[];
+  activeCycleId: string | null;
+}
+
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cycles, dispatch] = React.useReducer((state: Cycle[], action: any) => {
-    console.log(state);
-    console.log(action);
+  const [cyclesState, dispatch] = React.useReducer(
+    (state: CyclesState, action) => {
+      console.log(state);
+      console.log(action);
 
-    if (action.type === "ADD_NEW_CYCLE") {
-      return [...state, action.payload.newCycle];
-    }
+      if (action.type === "ADD_NEW_CYCLE") {
+        return {
+          ...state,
+          cycles: [...state.cycles, action.payload.newCycle],
+          activeCycleId: action.payload.newCycle.id,
+        };
+      }
 
-    return state;
-  }, []);
-  const [activeCycleId, setActiveCycleId] = React.useState<string | null>(null);
+      if (action.type === "INTERUPT_CURRENT_CYCLE") {
+        return {
+          ...state,
+          cycles: state.cycles.map((cycle) => {
+            if (cycle.id === state.activeCycleId) {
+              return {
+                ...cycle,
+                interuptedAt: new Date(),
+              };
+            }
+
+            return cycle;
+          }),
+          activeCycleId: null,
+        };
+      }
+
+      return state;
+    },
+    { cycles: [], activeCycleId: null }
+  );
+
+  const { cycles, activeCycleId } = cyclesState;
+
   const [ammountSecondsPast, setAmmountSecondsPast] = React.useState(0);
 
   function updateAmmountSecondsPast(ammount: number) {
@@ -30,21 +61,16 @@ export function CyclesContextProvider({
     dispatch({ type: "FINISH_CYCLE", payload: { activeCycleId } });
   }
 
-  function markCurrentCycleAsInterupted() {
-    dispatch({ type: "INTERUPT_CURRENT_CYCLE", payload: { activeCycleId } });
-  }
-
   function createNewCycle({ task, minutesAmount }: CreateCycleData) {
     const newCycle = createCycle({ task, minutesAmount });
 
     dispatch({ type: "ADD_NEW_CYCLE", payload: { newCycle } });
-    setActiveCycleId(newCycle.id);
+
     setAmmountSecondsPast(0);
   }
 
   function interruptCurrentCycle() {
-    setActiveCycleId(null);
-    markCurrentCycleAsInterupted();
+    dispatch({ type: "INTERUPT_CURRENT_CYCLE", payload: { activeCycleId } });
   }
 
   return (
