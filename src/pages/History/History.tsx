@@ -1,10 +1,11 @@
 import React from "react";
 import { CyclesContext } from "../../contexts/CyclesContext";
-import { HistoryContainer, HistoryList } from "./styles";
-import HistoryTableRow from "./components/HistoryTableRow";
+import { HistoryContainer, HistoryList, Status } from "./styles";
+import { useFormatDate } from "../../hooks/useFormatDate";
 
 export default function HistoryPage() {
   const { cycles } = React.useContext(CyclesContext);
+  const { formattedDate, ISODate, relativeDate } = useFormatDate();
 
   return (
     <HistoryContainer>
@@ -22,10 +23,29 @@ export default function HistoryPage() {
           </thead>
           <tbody>
             {cycles.map((cycle) => (
-              <HistoryTableRow
-                key={cycle.id}
-                cycle={cycle}
-              />
+              <tr key={cycle.id}>
+                <td>{cycle.task}</td>
+                <td>{cycle.minutesAmount} minutos</td>
+                <td>
+                  <time
+                    title={formattedDate(cycle.startDate)}
+                    dateTime={ISODate(cycle.startDate)}
+                  >
+                    Há {relativeDate(cycle.startDate)}
+                  </time>
+                </td>
+                <td>
+                  {cycle.finishedAt && (
+                    <Status statusColor="green">Concluído</Status>
+                  )}
+                  {cycle.interuptedAt && !cycle.finishedAt && (
+                    <Status statusColor="red">Interrompido</Status>
+                  )}
+                  {!cycle.interuptedAt && !cycle.finishedAt && (
+                    <Status statusColor="yellow">Em andamento</Status>
+                  )}
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>
