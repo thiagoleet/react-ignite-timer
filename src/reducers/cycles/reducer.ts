@@ -1,17 +1,13 @@
-import { Cycle } from "../models/Cycle";
-
-export enum ActionTypes {
-  ADD_NEW_CYCLE = "ADD_NEW_CYCLE",
-  INTERUPT_CURRENT_CYCLE = "INTERUPT_CURRENT_CYCLE",
-  FINISH_CYCLE = "FINISH_CYCLE",
-}
+import { Cycle } from "../../models/Cycle";
+import { ActionTypes } from "./actions";
 
 export interface CyclesState {
   cycles: Cycle[];
   activeCycleId: string | null;
 }
 
-export function cyclesReducer(state: CyclesState, action) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function cyclesReducer(state: CyclesState, action: any) {
   console.log(state);
   console.log(action);
 
@@ -19,14 +15,14 @@ export function cyclesReducer(state: CyclesState, action) {
     case ActionTypes.ADD_NEW_CYCLE:
       return {
         ...state,
-        cycles: [...state.cycles, action.payload.newCycle],
-        activeCycleId: action.payload.newCycle.id,
+        cycles: [...state.cycles, action.payload!.newCycle],
+        activeCycleId: action.payload!.newCycle!.id,
       };
     case ActionTypes.INTERUPT_CURRENT_CYCLE:
       return {
         ...state,
         cycles: state.cycles.map((cycle) => {
-          if (cycle.id === action.payload.activeCycleId) {
+          if (cycle.id === state.activeCycleId) {
             return {
               ...cycle,
               interuptedAt: new Date(),
