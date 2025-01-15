@@ -74,7 +74,7 @@ export function CyclesContextProvider({
   return (
     <CyclesContext.Provider
       value={{
-        activeCycle: cycles.find((cycle) => cycle.id === activeCycleId),
+        activeCycle,
         activeCycleId,
         ammountSecondsPast,
         cycles,
