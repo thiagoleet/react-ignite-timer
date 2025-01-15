@@ -1,3 +1,4 @@
+import { produce } from "immer";
 import { Cycle } from "../../models/Cycle";
 import { ActionTypes } from "./actions";
 
@@ -8,46 +9,40 @@ export interface CyclesState {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function cyclesReducer(state: CyclesState, action: any) {
-  console.log(state);
-  console.log(action);
-
   switch (action.type) {
     case ActionTypes.ADD_NEW_CYCLE:
-      return {
-        ...state,
-        cycles: [...state.cycles, action.payload!.newCycle],
-        activeCycleId: action.payload!.newCycle!.id,
-      };
-    case ActionTypes.INTERUPT_CURRENT_CYCLE:
-      return {
-        ...state,
-        cycles: state.cycles.map((cycle) => {
-          if (cycle.id === state.activeCycleId) {
-            return {
-              ...cycle,
-              interuptedAt: new Date(),
-            };
-          }
+      return produce(state, (draft) => {
+        draft.cycles.push(action.payload.newCycle);
+        draft.activeCycleId = action.payload.newCycle.id;
+      });
+    case ActionTypes.INTERUPT_CURRENT_CYCLE: {
+      const currentCycleIndex = state.cycles.findIndex((cycle) => {
+        return cycle.id === state.activeCycleId;
+      });
 
-          return cycle;
-        }),
-        activeCycleId: null,
-      };
-    case ActionTypes.FINISH_CYCLE:
-      return {
-        ...state,
-        cycles: state.cycles.map((cycle) => {
-          if (cycle.id === state.activeCycleId) {
-            return {
-              ...cycle,
-              finishedAt: new Date(),
-            };
-          }
+      if (currentCycleIndex === -1) {
+        return state;
+      }
 
-          return cycle;
-        }),
-        activeCycleId: null,
-      };
+      return produce(state, (draft) => {
+        draft.activeCycleId = null;
+        draft.cycles[currentCycleIndex].interuptedAt = new Date();
+      });
+    }
+    case ActionTypes.FINISH_CYCLE: {
+      const currentCycleIndex = state.cycles.findIndex((cycle) => {
+        return cycle.id === state.activeCycleId;
+      });
+
+      if (currentCycleIndex === -1) {
+        return state;
+      }
+
+      return produce(state, (draft) => {
+        draft.activeCycleId = null;
+        draft.cycles[currentCycleIndex].finishedAt = new Date();
+      });
+    }
 
     default:
       return state;
