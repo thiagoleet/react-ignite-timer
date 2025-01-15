@@ -1,6 +1,11 @@
-import { HistoryContainer, HistoryList, Status } from "./styles";
+import React from "react";
+import { CyclesContext } from "../../contexts/CyclesContext";
+import { HistoryContainer, HistoryList } from "./styles";
+import HistoryTableRow from "./components/HistoryTableRow";
 
 export default function HistoryPage() {
+  const { cycles } = React.useContext(CyclesContext);
+
   return (
     <HistoryContainer>
       <h1>Meu Histórico</h1>
@@ -16,38 +21,12 @@ export default function HistoryPage() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Nome da tarefa</td>
-              <td>20 minutos</td>
-              <td>Há 2 meses</td>
-              <td>
-                <Status statusColor="green">Concluído</Status>
-              </td>
-            </tr>
-            <tr>
-              <td>Nome da tarefa</td>
-              <td>20 minutos</td>
-              <td>Há 2 meses</td>
-              <td>
-                <Status statusColor="green">Concluído</Status>
-              </td>
-            </tr>
-            <tr>
-              <td>Nome da tarefa</td>
-              <td>20 minutos</td>
-              <td>Há 2 meses</td>
-              <td>
-                <Status statusColor="green">Concluído</Status>
-              </td>
-            </tr>
-            <tr>
-              <td>Nome da tarefa</td>
-              <td>20 minutos</td>
-              <td>Há 2 meses</td>
-              <td>
-                <Status statusColor="red">Concluído</Status>
-              </td>
-            </tr>
+            {cycles.map((cycle) => (
+              <HistoryTableRow
+                key={cycle.id}
+                cycle={cycle}
+              />
+            ))}
           </tbody>
         </table>
       </HistoryList>
