@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { act, ReactNode } from "react";
 import { createCycle, CreateCycleData, Cycle } from "../models/Cycle";
 import { CyclesContext } from "./CyclesContext";
 
@@ -19,32 +19,47 @@ export function CyclesContextProvider({
       console.log(state);
       console.log(action);
 
-      if (action.type === "ADD_NEW_CYCLE") {
-        return {
-          ...state,
-          cycles: [...state.cycles, action.payload.newCycle],
-          activeCycleId: action.payload.newCycle.id,
-        };
+      switch (action.type) {
+        case "ADD_NEW_CYCLE":
+          return {
+            ...state,
+            cycles: [...state.cycles, action.payload.newCycle],
+            activeCycleId: action.payload.newCycle.id,
+          };
+        case "INTERUPT_CURRENT_CYCLE":
+          return {
+            ...state,
+            cycles: state.cycles.map((cycle) => {
+              if (cycle.id === action.payload.activeCycleId) {
+                return {
+                  ...cycle,
+                  interuptedAt: new Date(),
+                };
+              }
+
+              return cycle;
+            }),
+            activeCycleId: null,
+          };
+        case "FINISH_CYCLE":
+          return {
+            ...state,
+            cycles: state.cycles.map((cycle) => {
+              if (cycle.id === state.activeCycleId) {
+                return {
+                  ...cycle,
+                  finishedAt: new Date(),
+                };
+              }
+
+              return cycle;
+            }),
+            activeCycleId: null,
+          };
+
+        default:
+          return state;
       }
-
-      if (action.type === "INTERUPT_CURRENT_CYCLE") {
-        return {
-          ...state,
-          cycles: state.cycles.map((cycle) => {
-            if (cycle.id === state.activeCycleId) {
-              return {
-                ...cycle,
-                interuptedAt: new Date(),
-              };
-            }
-
-            return cycle;
-          }),
-          activeCycleId: null,
-        };
-      }
-
-      return state;
     },
     { cycles: [], activeCycleId: null }
   );
